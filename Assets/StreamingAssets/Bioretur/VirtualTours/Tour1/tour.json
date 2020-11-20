@@ -1,0 +1,261 @@
+{
+	"startState": 1,
+	"states": {
+		"1": {
+			"img": "Bioretur/VirtualTours/Tour1/1-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/1-right.jpg",
+			"markers": [
+				{
+					"reference": "state:2",
+					"scale": {
+						"x": 1.7,
+						"y": 1.7,
+						"z": 1.7
+					},
+					"position": {
+						"x": -0.5,
+						"y": 0.0,
+						"z": 19.5
+					}
+				},
+				{
+					"reference": "state:6",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": 12.6,
+						"y": 0.0,
+						"z": -17.7
+					}
+				},
+				{
+					"reference": "state:7",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": -19,
+						"y": -1.9,
+						"z": 8
+					}
+				}
+			]
+		},
+		"2": {
+			"img": "Bioretur/VirtualTours/Tour1/2-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/2-right.jpg",
+			"markers": [
+				{
+					"reference": "state:3",
+					"scale": {
+						"x": 1.7,
+						"y": 1.7,
+						"z": 1.7
+					},
+					"position": {
+						"x": 20.7,
+						"y": 0.0,
+						"z": 0
+					}
+				},
+				{
+					"reference": "state:1",
+					"scale": {
+						"x": 1.5,
+						"y": 1.5,
+						"z": 1.5
+					},
+					"position": {
+						"x": 1.5,
+						"y": 0.0,
+						"z": -13.5
+					}
+				}
+			]
+		},
+		"3": {
+			"img": "Bioretur/VirtualTours/Tour1/3-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/3-right.jpg",
+			"markers": [
+				{
+					"reference": "state:2",
+					"scale": {
+						"x": 0.7,
+						"y": 0.7,
+						"z": 0.7
+					},
+					"position": {
+						"x": -4.86,
+						"y": 0.0,
+						"z": -6.8
+					}
+				},
+				{
+					"reference": "state:4",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": 19.4,
+						"y": -2.0,
+						"z": -5.3
+					}
+				}
+			]
+		},
+		"4": {
+			"img": "Bioretur/VirtualTours/Tour1/4-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/4-right.jpg",
+			"markers": [
+				{
+					"reference": "state:3",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": -19.6,
+						"y": 0.0,
+						"z": 4.8
+					}
+				},
+				{
+					"reference": "state:6",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": 19.4,
+						"y": 0.0,
+						"z": -5.3
+					}
+				}
+			]
+		},
+		"5": {
+			"img": "Bioretur/VirtualTours/Tour1/5-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/5-right.jpg",
+			"markers": [
+				{
+					"reference": "state:4",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": -19.6,
+						"y": 0.0,
+						"z": 4.8
+					}
+				},
+				{
+					"reference": "state:6",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": 19.4,
+						"y": 0.0,
+						"z": -5.3
+					}
+				}
+			]
+		},
+		"6": {
+			"img": "Bioretur/VirtualTours/Tour1/6-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/6-right.jpg",
+			"markers": [
+				{
+					"reference": "state:4",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": -3,
+						"y": 0.0,
+						"z": -15.4
+					}
+				},
+				{
+					"reference": "state:1",
+					"scale": {
+						"x": 2.2,
+						"y": 2.2,
+						"z": 2.2
+					},
+					"position": {
+						"x": 19.4,
+						"y": 0.0,
+						"z": -5.3
+					}
+				}
+			]
+		},
+		"7": {
+			"img": "Bioretur/VirtualTours/Tour1/7-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/7-right.jpg",
+			"markers": [
+				{
+					"reference": "state:8",
+					"scale": {
+						"x": 1.4,
+						"y": 1.4,
+						"z": 1.4
+					},
+					"position": {
+						"x": 18.78,
+						"y": 0.0,
+						"z": 6.48
+					}
+				},
+				{
+					"reference": "state:1",
+					"scale": {
+						"x": 1.4,
+						"y": 1.4,
+						"z": 1.4
+					},
+					"position": {
+						"x": 14.7,
+						"y": 0.0,
+						"z": -9.8
+					}
+				}
+			]
+		},
+		"8": {
+			"img": "Bioretur/VirtualTours/Tour1/8-left.jpg",
+			"img2": "Bioretur/VirtualTours/Tour1/8-right.jpg",
+			"markers": [
+				{
+					"reference": "state:7",
+					"scale": {
+						"x": 1.4,
+						"y": 1.4,
+						"z": 1.4
+					},
+					"position": {
+						"x": -19.6,
+						"y": 0.0,
+						"z": -6.67
+					}
+				}
+			]
+		}
+	}
+}
