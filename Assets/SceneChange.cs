@@ -8,6 +8,8 @@ public class SceneChange : MonoBehaviour
 
     public void ChangeSceneToLobby()
     {
+        //VirtualTourManager vt = new VirtualTourManager();
+        //StartCoroutine(vt.FadeInOutNewState(LoadEnumTest()));
         SceneManager.LoadScene("Lobby");
     }
 
@@ -16,6 +18,12 @@ public class SceneChange : MonoBehaviour
         TourSelect.selectedTour = folder;
         SceneManager.LoadScene(sceneName);
         Debug.Log(sceneName + "   " + folder);
+    }
+
+    public IEnumerator LoadEnumTest()
+    {
+        SceneManager.LoadScene("Lobby");
+        yield return null;
     }
 
 }

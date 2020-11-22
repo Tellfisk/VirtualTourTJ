@@ -99,7 +99,7 @@ public class VirtualTourManager : MonoBehaviour
     }
 
 
-    IEnumerator FadeInOutNewState(IEnumerator loadFunc)
+    public IEnumerator FadeInOutNewState(IEnumerator loadFunc)
     {
         yield return StartCoroutine(FadeOut());
         yield return StartCoroutine(loadFunc);
@@ -115,7 +115,7 @@ public class VirtualTourManager : MonoBehaviour
         while (!hasFadedOut)
         {
             coDelta = Time.time - lastTime;
-            alpha = newAlpha(coDelta, 1, alpha);
+            alpha = NewAlpha(coDelta, 1, alpha);
 
             if (alpha == 1)
             {
@@ -140,7 +140,7 @@ public class VirtualTourManager : MonoBehaviour
         {
             coDelta = Time.time - lastTime;
 
-            alpha = newAlpha(coDelta, 0, alpha);
+            alpha = NewAlpha(coDelta, 0, alpha);
             if (alpha == 0)
             {
                 hasFadedIn = true;
@@ -232,7 +232,7 @@ public class VirtualTourManager : MonoBehaviour
         }
     }
 
-    float newAlpha(float delta, int to, float currAlpha)
+    float NewAlpha(float delta, int to, float currAlpha)
     {
         switch (to)
         {
