@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 public class SceneChange : MonoBehaviour
 {
 
-    public void ChangeScene(string sceneName)
+    public void ChangeSceneToLobby()
     {
-        SceneManager.LoadScene(sceneName);
+        SceneManager.LoadScene("Lobby");
     }
 
-    public void ChangeSceneAndTour(string sceneName, string folder)
+    public static void ChangeSceneAndTour(string sceneName, string folder)
     {
-        TourSelectxxx.selectedTour = folder;
+        TourSelect.selectedTour = folder;
         SceneManager.LoadScene(sceneName);
         Debug.Log(sceneName + "   " + folder);
     }

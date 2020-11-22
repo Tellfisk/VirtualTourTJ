@@ -35,7 +35,7 @@ public class VirtualTourManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        tourPath = TourSelectxxx.selectedTour;
+        tourPath = TourSelect.selectedTour;
         //Getting the visual elements 
         bg.color = fadeColor;
         myCanvas.alpha = 0;
@@ -254,8 +254,8 @@ public class VirtualTourManager : MonoBehaviour
     }
 }
 
-public class TourSelectxxx
+public class TourSelect
 {
-    public static string selectedTour = "MMX";
+    public static string selectedTour;
 
 }

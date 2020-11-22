@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-using UnityEngine.UI;
 using System.IO;
 
 public class ButtonController : MonoBehaviour
 { 
     public GameObject buttonPrefab;
-    private float staticPos = -30;
-    public string tourFolder;
+    private float staticPos = -30;   // Has to be dynamic, changing based on the number of available tours
 
     void Start()
     {
@@ -22,10 +20,11 @@ public class ButtonController : MonoBehaviour
             string tourPath = path.ToString();
             string[] words = tourPath.Split('/');
             string tourFolder = words[words.Length - 1];  //Get the folder name from the path
+
             GameObject go = GameObject.Instantiate(buttonPrefab);
-            go.transform.position = new Vector3(staticPos, 0, 20);
-            go.GetComponent<ButtonClass>().folder = tourFolder;
+            go.transform.position = new Vector3(staticPos, 0, 20); // Has to be dynamic, changing based on the number of available tours
             staticPos += 20;
+            go.GetComponent<ButtonClass>().folder = tourFolder;
         }
     }
 
@@ -42,7 +41,7 @@ public class ButtonController : MonoBehaviour
                 {
                     GameObject button = hit.collider.gameObject;
                     string folder = button.GetComponent<ButtonClass>().folder;
-                    button.GetComponent<SceneChange>().ChangeSceneAndTour("VirtualTour", folder);
+                    SceneChange.ChangeSceneAndTour("VirtualTour", folder);
                 }
             }
         }
