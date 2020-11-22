@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 public class VirtualTourManager : MonoBehaviour
 {
-    public string tourPath;
+    private string tourPath;
     public VirtualTour vt;
 
     public Shader imgStereoShader;
@@ -35,6 +35,7 @@ public class VirtualTourManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tourPath = TourSelectxxx.selectedTour;
         //Getting the visual elements 
         bg.color = fadeColor;
         myCanvas.alpha = 0;
@@ -251,4 +252,10 @@ public class VirtualTourManager : MonoBehaviour
 
         return currAlpha;
     }
+}
+
+public class TourSelectxxx
+{
+    public static string selectedTour = "MMX";
+
 }
