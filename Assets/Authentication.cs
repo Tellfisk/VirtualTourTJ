@@ -8,11 +8,15 @@ using Firebase.Firestore;
 using Firebase.Extensions;
 using System;
 using System.IO;
+using UnityEngine.Networking;
+using Newtonsoft.Json;
 
 public class Authentication : MonoBehaviour
 {
     private FirebaseAuth auth;
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference reference;
 
     public GameObject usernameField;
     public GameObject passwordField;
@@ -22,11 +26,17 @@ public class Authentication : MonoBehaviour
     {
         auth = FirebaseAuth.DefaultInstance;
         db = FirebaseFirestore.DefaultInstance;
+        storage = FirebaseStorage.DefaultInstance;
+
+        ////
+        string localDLPath = Path.Combine(Application.streamingAssetsPath);
+        string tourFolder = localDLPath + "/" + "nice/";
+        StartCoroutine(LoadVirtualTour(tourFolder));
+        ////
     }
 
     public void AuthUser(string email, string password)
     {
-        Debug.Log(auth);
         // "dummy@gmail.com", "123456"
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
         {
@@ -41,10 +51,7 @@ public class Authentication : MonoBehaviour
                 return;
             }
 
-            Firebase.Auth.FirebaseUser newUser = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                newUser.DisplayName, newUser.UserId);
-            Debug.Log(newUser.DisplayName);
+            FirebaseUser newUser = task.Result;
             return;
         });
     }
@@ -57,7 +64,6 @@ public class Authentication : MonoBehaviour
             usernameField.GetComponent<TMPro.TMP_InputField>().text, 
             passwordField.GetComponent<TMPro.TMP_InputField>().text
             );
-        
     }
 
     public void PostAuth(object sender, System.EventArgs eventArgs)
@@ -73,33 +79,59 @@ public class Authentication : MonoBehaviour
         }
     }
 
-    private IEnumerator DownloadRoutine(string firebaseBucketName)
+    private void DownloadRoutine(string firebaseFolderName)
     {
-        var storage = FirebaseStorage.DefaultInstance;
-        var texreference = storage.GetReference("tours/" + firebaseBucketName);
-        Debug.Log("tours/" + firebaseBucketName);
-
+        string filename = "tour.json";
+        // Create local filesystem URL
         string localDLPath = Path.Combine(Application.streamingAssetsPath);
+        string local_url = localDLPath + "/" + firebaseFolderName + "/" + filename;
+        reference = storage.GetReference("Tours/" + firebaseFolderName);
+        reference = reference.Child(filename);
+        Debug.Log("Download to: " + local_url);
 
-        System.Threading.Tasks.Task<byte[]> downloadTask = texreference.GetBytesAsync(long.MaxValue);
-        yield return new WaitUntil(() => downloadTask.IsCompleted);
-
-        // Fetch the download URL
-        reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) => {
-            if (!task.IsFaulted && !task.IsCanceled)
-            {
-                Debug.Log("Download URL: " + task.Result());
-                // ... now download the file via WWW or UnityWebRequest.
-            }
-        });
-
+        // Download tour.json to the local filesystem
+        System.Threading.Tasks.Task downloadTask = reference.GetFileAsync(local_url);
+        //yield return new WaitUntil(() => downloadTask.IsCompleted);
         //TODO: Display whether downloads were successful
+    }
+
+    IEnumerator LoadVirtualTour(string jsonPath)
+    {
+        HashSet<string> imageNames = new HashSet<string>();
+        string dataAsJson = "";
+        jsonPath += "tour.json";
+        Debug.Log(jsonPath);
+        VirtualTour vt = null;
+
+        UnityWebRequest www = UnityWebRequest.Get(jsonPath);
+        yield return www.SendWebRequest();
+        dataAsJson = www.downloadHandler.text;
+
+        try
+        {
+            vt = JsonConvert.DeserializeObject<VirtualTour>(dataAsJson);
+        }
+        catch (JsonException je)
+        {
+            // do nothing, try to continue
+            Debug.Log("QUESTDEB: error with deserialization : " + je.Message);
+        }
+
+        if (vt != null)
+        {
+            Dictionary<int, VirtualState> states = vt.states;
+            foreach (VirtualState state in states.Values)
+            {
+                Debug.Log("ÅJADDAAA!   " + state.img + " ,  " + state.img2);
+                imageNames.Add(state.img);
+                imageNames.Add(state.img2);
+            }
+        }
+        yield return imageNames;
     }
 
     private void FindAndDownloadFirebaseFolders()
     {
-        
-
         CollectionReference usersRef = db.Collection("users");
         usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
@@ -114,22 +146,35 @@ public class Authentication : MonoBehaviour
                 foreach (string lol in xxx)
                 {
                     tourNames.Add(lol);
-                    //DownloadRoutine(lol);
                 }
-
             }
             Debug.Log(tourNames);
             return tourNames;
         }).ContinueWith(task => {
-            List<string> tourNames = task.Result;
-
-            foreach(string tourName in tourNames)
+            List<string> tourNames = task.Result;  //TODO: Contains duplicates
+            string localDLPath = Path.Combine(Application.streamingAssetsPath);
+            foreach (string tourName in tourNames)
             {
-                StartCoroutine(DownloadRoutine(tourName));
+                string tourFolder = localDLPath + "/" + tourName;
+                Debug.Log("YYYOOOOoo " + tourName);
+
+                DownloadRoutine(tourName);
+                StartCoroutine(LoadVirtualTour(tourFolder));
+                continue;  //TODO: Bad workaround
+                try
+                {
+                    if (!Directory.Exists(tourFolder))
+                    {
+                        Directory.CreateDirectory(tourFolder);
+                        Debug.Log("YYYOOOOoo " + tourName);
+                        DownloadRoutine(tourName);
+                    }
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
-
         });
-
-
     }
 }
