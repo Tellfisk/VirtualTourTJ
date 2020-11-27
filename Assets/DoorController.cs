@@ -9,7 +9,7 @@ using TMPro;
 public class DoorController : MonoBehaviour
 { 
     public GameObject doorPrefab;
-    private float staticPos = -5;   // Has to be dynamic, changing based on the number of available tours
+    private float staticPos = -5;   // TODO Has to be dynamic, changing based on the number of available tours
 
     void Start()
     {

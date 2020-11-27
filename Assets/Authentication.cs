@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Firebase.Auth;
 using UnityEngine;
 
 public class Authentication : MonoBehaviour
 {
+    private FirebaseAuth auth;
+
     // Start is called before the first frame update
     void Awake()
     {
-        InitializeFirebase();
+        auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     }
 
-    void InitializeFirebase()
+    public void InitializeFirebase(string email, string password)
     {
-        var auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
         Debug.Log(auth);
         auth.SignInWithEmailAndPasswordAsync("dummy@gmail.com", "123456").ContinueWith(task => {
             if (task.IsCanceled)
@@ -30,12 +32,12 @@ public class Authentication : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
             Debug.Log(newUser.DisplayName);
+            SceneChange.ChangeSceneToLobby();
         });
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Hei()
     {
-        
+        Debug.Log("off");
     }
+
 }
