@@ -6,9 +6,6 @@ using UnityEngine.SceneManagement;
 public class SceneChange : MonoBehaviour
 {
 
-    Firebase.Auth.FirebaseAuth auth;
-    Firebase.Auth.FirebaseUser user;
-
     public void ChangeSceneToLobby()
     {
         //VirtualTourManager vt = new VirtualTourManager();
