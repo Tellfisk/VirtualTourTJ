@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using Firebase.Auth;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Authentication : MonoBehaviour
 {
     private FirebaseAuth auth;
+
+    public GameObject usernameField;
+    public GameObject passwordField;
 
     // Start is called before the first frame update
     void Awake()
@@ -13,10 +17,12 @@ public class Authentication : MonoBehaviour
         auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     }
 
-    public void InitializeFirebase(string email, string password)
+    public void AuthUser(string email, string password)
     {
         Debug.Log(auth);
-        auth.SignInWithEmailAndPasswordAsync("dummy@gmail.com", "123456").ContinueWith(task => {
+        // "dummy@gmail.com", "123456"
+        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
+        {
             if (task.IsCanceled)
             {
                 Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
@@ -32,12 +38,29 @@ public class Authentication : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
             Debug.Log(newUser.DisplayName);
-            SceneChange.ChangeSceneToLobby();
+            return;
         });
+
+
     }
     public void Hei()
     {
-        Debug.Log("off");
+        auth.SignOut();
+        auth.StateChanged += PostAuth;
+        AuthUser(usernameField.GetComponent<TMPro.TMP_InputField>().text, passwordField.GetComponent<TMPro.TMP_InputField>().text);
+        
     }
 
+    public void PostAuth(object sender, System.EventArgs eventArgs)
+    {
+        if(auth.CurrentUser == null)
+        {
+            Debug.Log("Login failed, try again.");
+        }
+        else
+        {
+            SceneManager.LoadScene("Lobby");
+        }
+        
+    }
 }

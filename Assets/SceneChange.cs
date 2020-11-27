@@ -10,6 +10,7 @@ public class SceneChange : MonoBehaviour
     {
         //VirtualTourManager vt = new VirtualTourManager();
         //StartCoroutine(vt.FadeInOutNewState(LoadEnumTest()));
+        Debug.Log("test");
         SceneManager.LoadScene("Lobby");
     }
 
