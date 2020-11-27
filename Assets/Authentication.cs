@@ -47,7 +47,10 @@ public class Authentication : MonoBehaviour
     {
         auth.SignOut();
         auth.StateChanged += PostAuth;
-        AuthUser(usernameField.GetComponent<TMPro.TMP_InputField>().text, passwordField.GetComponent<TMPro.TMP_InputField>().text);
+        AuthUser(
+            usernameField.GetComponent<TMPro.TMP_InputField>().text, 
+            passwordField.GetComponent<TMPro.TMP_InputField>().text
+            );
         
     }
 
