@@ -6,10 +6,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using System;
 
 public class Authentication : MonoBehaviour
 {
     private FirebaseAuth auth;
+    FirebaseFirestore db;
 
     public GameObject usernameField;
     public GameObject passwordField;
@@ -18,6 +20,7 @@ public class Authentication : MonoBehaviour
     void Awake()
     {
         auth = FirebaseAuth.DefaultInstance;
+        db = FirebaseFirestore.DefaultInstance;
     }
 
     public void AuthUser(string email, string password)
@@ -60,7 +63,8 @@ public class Authentication : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("Lobby");
+            FindAndDownloadFirebaseFolders();
+            //SceneManager.LoadScene("Lobby");
         }
     }
 
@@ -81,7 +85,21 @@ public class Authentication : MonoBehaviour
     {
         List<string> folderNames = new List<string>();
 
-
+        CollectionReference usersRef = db.Collection("users");
+        usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            QuerySnapshot snapshot = task.Result;
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                Dictionary<string, object> documentDictionary = document.ToDictionary();
+                Debug.Log(String.Format("User: {0} \nCompany: {1} \tName: {2}", document.Id, documentDictionary["company"], documentDictionary["name"]));
+                List<string> list = (List<string>) documentDictionary["tours"];
+                foreach (string sss in list)
+                {
+                    Debug.Log(sss);
+                }
+            }
+        });
 
         foreach (string folderName in folderNames) 
         {
