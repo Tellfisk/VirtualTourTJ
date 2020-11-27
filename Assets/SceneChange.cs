@@ -14,11 +14,11 @@ public class SceneChange : MonoBehaviour
         SceneManager.LoadScene("Lobby");
     }
 
-    public static void ChangeSceneAndTour(string sceneName, string folder)
+    public static void ChangeSceneAndTour(string sceneName, string tourName)
     {
-        TourSelect.selectedTour = folder;
+        TourSelect.selectedTourName = tourName;
         SceneManager.LoadScene(sceneName);
-        Debug.Log(sceneName + "   " + folder);
+        Debug.Log(sceneName + "   " + tourName);
     }
 
     public IEnumerator LoadEnumTest()

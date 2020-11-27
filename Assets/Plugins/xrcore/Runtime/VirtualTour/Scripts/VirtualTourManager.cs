@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 public class VirtualTourManager : MonoBehaviour
 {
-    private string tourPath;
+    private string tourName;
     public VirtualTour vt;
 
     public Shader imgStereoShader;
@@ -35,12 +35,12 @@ public class VirtualTourManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        tourPath = TourSelect.selectedTour;
+        tourName = TourSelect.selectedTourName;
         //Getting the visual elements 
         bg.color = fadeColor;
         myCanvas.alpha = 0;
 
-        string tourFilePath = Path.Combine(Application.streamingAssetsPath, tourPath, "tour.json");
+        string tourFilePath = Path.Combine(Application.streamingAssetsPath, tourName, "tour.json");
 
         StartCoroutine(LoadVirtualTour(tourFilePath));
     }
@@ -79,7 +79,7 @@ public class VirtualTourManager : MonoBehaviour
     {
         if (!loadingInProgress)
         {
-            string tourImgsPath = Path.Combine(Application.streamingAssetsPath, tourPath);
+            string tourImgsPath = Path.Combine(Application.streamingAssetsPath, tourName);
             VirtualState currState = vt.states[state];
 
             if (!string.IsNullOrEmpty(Path.Combine(tourImgsPath, currState.img)))
@@ -256,6 +256,6 @@ public class VirtualTourManager : MonoBehaviour
 
 public class TourSelect
 {
-    public static string selectedTour;
+    public static string selectedTourName;
 
 }
