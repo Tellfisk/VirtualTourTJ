@@ -16,7 +16,7 @@ public class SceneChange : MonoBehaviour
 
     public static void ChangeSceneAndTour(string sceneName, string tourName)
     {
-        TourSelect.selectedTour = tourName;
+        TourSelect.selectedTourName = tourName;
         SceneManager.LoadScene(sceneName);
         Debug.Log(sceneName + "   " + tourName);
     }

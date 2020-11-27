@@ -1,6 +1,11 @@
-﻿using Firebase.Auth;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Firebase.Auth;
+using Firebase.Storage;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Firebase.Firestore;
+using Firebase.Extensions;
 
 public class Authentication : MonoBehaviour
 {
@@ -56,6 +61,31 @@ public class Authentication : MonoBehaviour
         else
         {
             SceneManager.LoadScene("Lobby");
+        }
+    }
+
+    private void /*IEnumerator*/ DownloadRoutine(string firebaseBucketName)
+    {
+        var storage = FirebaseStorage.DefaultInstance;
+        var texreference = storage.GetReference("tours/" + firebaseBucketName);
+        Debug.Log("tours/" + firebaseBucketName);
+
+        //System.Threading.Tasks.Task<byte[]> downloadTask = texreference.GetBytesAsync(long.MaxValue);
+        //yield return new WaitUntil(() => downloadTask.IsCompleted);
+
+
+        //TODO: Display whether downloads were successful
+    }
+
+    private void FindAndDownloadFirebaseFolders()
+    {
+        List<string> folderNames = new List<string>();
+
+
+
+        foreach (string folderName in folderNames) 
+        {
+            DownloadRoutine(folderName);
         }
     }
 }
