@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Firebase.Auth;
+﻿using Firebase.Auth;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,7 +12,7 @@ public class Authentication : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        auth = FirebaseAuth.DefaultInstance;
     }
 
     public void AuthUser(string email, string password)
@@ -40,15 +38,13 @@ public class Authentication : MonoBehaviour
             Debug.Log(newUser.DisplayName);
             return;
         });
-
-
     }
+
     public void Hei()
     {
         auth.SignOut();
         auth.StateChanged += PostAuth;
         AuthUser(usernameField.GetComponent<TMPro.TMP_InputField>().text, passwordField.GetComponent<TMPro.TMP_InputField>().text);
-        
     }
 
     public void PostAuth(object sender, System.EventArgs eventArgs)
@@ -61,6 +57,5 @@ public class Authentication : MonoBehaviour
         {
             SceneManager.LoadScene("Lobby");
         }
-        
     }
 }
