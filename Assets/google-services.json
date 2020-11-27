@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1093970165984",
+    "firebase_url": "https://vue-app-a4d41.firebaseio.com",
+    "project_id": "vue-app-a4d41",
+    "storage_bucket": "vue-app-a4d41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093970165984:android:3b341b4de09a7e16319085",
+        "android_client_info": {
+          "package_name": "unity.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093970165984-25saeq0vkjc5cqicn958ku6d2do5fil7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBis9dFSOeT4EEW5WMTxbYdiJCh_D7r0-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093970165984-25saeq0vkjc5cqicn958ku6d2do5fil7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
