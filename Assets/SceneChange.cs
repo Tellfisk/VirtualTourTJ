@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneChange : MonoBehaviour
 {
 
-    public void ChangeSceneToLobby()
+    public static void ChangeSceneToLobby()
     {
         //VirtualTourManager vt = new VirtualTourManager();
         //StartCoroutine(vt.FadeInOutNewState(LoadEnumTest()));
