@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using System;
+using System.IO;
 
 public class Authentication : MonoBehaviour
 {
@@ -72,42 +73,63 @@ public class Authentication : MonoBehaviour
         }
     }
 
-    private void /*IEnumerator*/ DownloadRoutine(string firebaseBucketName)
+    private IEnumerator DownloadRoutine(string firebaseBucketName)
     {
         var storage = FirebaseStorage.DefaultInstance;
         var texreference = storage.GetReference("tours/" + firebaseBucketName);
         Debug.Log("tours/" + firebaseBucketName);
 
-        //System.Threading.Tasks.Task<byte[]> downloadTask = texreference.GetBytesAsync(long.MaxValue);
-        //yield return new WaitUntil(() => downloadTask.IsCompleted);
+        string localDLPath = Path.Combine(Application.streamingAssetsPath);
 
+        System.Threading.Tasks.Task<byte[]> downloadTask = texreference.GetBytesAsync(long.MaxValue);
+        yield return new WaitUntil(() => downloadTask.IsCompleted);
+
+        // Fetch the download URL
+        reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) => {
+            if (!task.IsFaulted && !task.IsCanceled)
+            {
+                Debug.Log("Download URL: " + task.Result());
+                // ... now download the file via WWW or UnityWebRequest.
+            }
+        });
 
         //TODO: Display whether downloads were successful
     }
 
     private void FindAndDownloadFirebaseFolders()
     {
-        List<string> folderNames = new List<string>();
+        
 
         CollectionReference usersRef = db.Collection("users");
         usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
+            List<string> tourNames = new List<string>();
+
             QuerySnapshot snapshot = task.Result;
             foreach (DocumentSnapshot document in snapshot.Documents)
             {
+                var aaa = document;
                 Dictionary<string, object> documentDictionary = document.ToDictionary();
-                Debug.Log(String.Format("User: {0} \nCompany: {1} \tName: {2}", document.Id, documentDictionary["company"], documentDictionary["name"]));
-                List<string> list = (List<string>) documentDictionary["tours"];
-                foreach (string sss in list)
+                IList xxx = (IList)documentDictionary["tours"];
+                foreach (string lol in xxx)
                 {
-                    Debug.Log(sss);
+                    tourNames.Add(lol);
+                    //DownloadRoutine(lol);
                 }
+
             }
+            Debug.Log(tourNames);
+            return tourNames;
+        }).ContinueWith(task => {
+            List<string> tourNames = task.Result;
+
+            foreach(string tourName in tourNames)
+            {
+                StartCoroutine(DownloadRoutine(tourName));
+            }
+
         });
 
-        foreach (string folderName in folderNames) 
-        {
-            DownloadRoutine(folderName);
-        }
+
     }
 }
