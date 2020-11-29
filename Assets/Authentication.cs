@@ -84,9 +84,9 @@ public class Authentication : MonoBehaviour
         string filename = "tour.json";
         // Create local filesystem URL
         string localDLPath = Path.Combine(Application.streamingAssetsPath);
-        string local_url = localDLPath + "/" + firebaseFolderName + "/" + filename;
+        string local_url = localDLPath + "/" + firebaseFolderName; // + "/" + filename;
         reference = storage.GetReference("Tours/" + firebaseFolderName);
-        reference = reference.Child(filename);
+        //reference = reference.Child(filename);
         Debug.Log("Download to: " + local_url);
 
         // Download tour.json to the local filesystem
@@ -153,14 +153,17 @@ public class Authentication : MonoBehaviour
         }).ContinueWith(task => {
             List<string> tourNames = task.Result;  //TODO: Contains duplicates
             string localDLPath = Path.Combine(Application.streamingAssetsPath);
+            var xx = storage.GetReference("Tours");
+            var xxx = storage.GetReference("Tours/");
             foreach (string tourName in tourNames)
             {
                 string tourFolder = localDLPath + "/" + tourName;
                 Debug.Log("YYYOOOOoo " + tourName);
 
                 DownloadRoutine(tourName);
-                StartCoroutine(LoadVirtualTour(tourFolder));
+                LoadVirtualTour(tourFolder);
                 continue;  //TODO: Bad workaround
+
                 try
                 {
                     if (!Directory.Exists(tourFolder))
