@@ -11,6 +11,7 @@ using System.IO;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Threading;
 
 public class Authentication : MonoBehaviour
 {
@@ -212,7 +213,9 @@ public class Authentication : MonoBehaviour
 
         foreach (string tourName in docTours)
         {
+            //
             DocumentSnapshot snap = await getSnapAsync(tourName);
+            //
             Dictionary<string, object> tourDic = snap.ToDictionary();
             IList imageNames = (IList) tourDic["images"];
 
@@ -220,15 +223,99 @@ public class Authentication : MonoBehaviour
 
             foreach (string imgName in imageNames)
             {
-                tourRef.addImage(imgName);
+                tourRef.AddImage(imgName);
             }
 
             tourRefs.Add(tourRef);
 
         }
 
-        Debug.Log(tourRefs);
+        foreach (CloudTourReference tourRef in tourRefs)
+        {
+            string tourName = tourRef.tourName;
+            StorageReference tourReference = tourRef.tourReference;
+            List<string> imgNames = tourRef.imgNames;
 
+            Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
+            string createdDir = Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours")).FullName;
+
+            string localDLPath = Path.Combine(createdDir, tourName);
+
+            string tourJsonName = "tour.json";
+
+            try
+            {
+                if (!Directory.Exists(localDLPath))
+                {
+                    Debug.Log("Path does not exist for: " + tourName);
+                    Directory.CreateDirectory(localDLPath);
+
+                    
+
+                    // download json
+                    string localJsonPath = Path.Combine(localDLPath, tourJsonName);
+                    Debug.Log(localJsonPath);
+                    string localJsonUri = new System.Uri(localJsonPath).AbsoluteUri;
+                    localJsonUri = "file:///C:/Users/jovli/OneDrive/Documents/UnityProjects/TJFreshAFVirtualTour/VirtualTourTJ/Assets/StreamingAssets/Tours/ooOOOOHcountry/tour.json";
+                    //localJsonUri = localJsonPath;
+
+
+                    StorageReference childref = tourReference.Child(tourJsonName);
+
+                    Debug.Log("DOWNLOADING TO " + localJsonUri);
+                    Task oioi = childref.GetFileAsync(localJsonUri, new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) =>
+                    {
+                        // called periodically during the download
+                        Debug.Log(String.Format(
+                          "Progress: {0} of {1} bytes transferred.",
+                          state.BytesTransferred,
+                          state.TotalByteCount
+                        ));
+                    }), CancellationToken.None)
+                        ;
+                     //   .ContinueWith(task => { Debug.Log(task.Exception); Debug.Log(task.IsCompleted); Debug.Log(task.IsFaulted); });
+
+
+                    await oioi;
+
+                    // download images
+                    //foreach (string imgName in imgNames)
+                    //{
+                    //    string localImgPath = Path.GetFullPath(Path.Combine(localDLPath, imgName));
+                    //    string localImgUri = new System.Uri(localImgPath).AbsoluteUri;
+                    //    Debug.Log(localImgUri);
+
+                    //    await tourReference.Child(imgName).GetFileAsync(localImgUri, new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) => {
+                    //        // called periodically during the download
+                    //        Debug.Log(String.Format(
+                    //          "Progress: {0} of {1} bytes transferred.",
+                    //          state.BytesTransferred,
+                    //          state.TotalByteCount
+                    //        ));
+                    //    }), CancellationToken.None);
+                    //}
+
+                    Debug.Log("downloaded lmao");
+
+                }
+                else
+                {
+                    Debug.Log(String.Format("Directory for {0} already exists", tourName));
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
+            //foreach (CloudTourReference tourRef in tourRefs) {
+            //    await tourRef.DownloadReference();
+            //}
+
+
+            
 
         //userRef.GetSnapshotAsync().ContinueWith(task =>
         //{
@@ -371,27 +458,73 @@ public class Authentication : MonoBehaviour
 public class CloudTourReference
 {
     public StorageReference tourReference;
+
     public string tourName;
     public List<string> imgNames;
-    private StorageReference storageReference;
 
-    public CloudTourReference(StorageReference storageReference, string tourName)
+
+    public CloudTourReference(StorageReference tourReference, string tourName)
     {
-        this.storageReference = storageReference;
+        this.tourReference = tourReference;
         this.tourName = tourName;
         this.imgNames = new List<string>();
     }
 
-    public CloudTourReference(StorageReference dirReference, string tourName, List<string> imgNames)
+    public CloudTourReference(StorageReference tourReference, string tourName, List<string> imgNames)
     {
-        this.tourReference = dirReference;
+        this.tourReference = tourReference;
         this.tourName = tourName;
         this.imgNames = imgNames;
     }
 
-    public void addImage(string imageName)
+    public void AddImage(string imageName)
     {
         this.imgNames.Add(imageName);
+    }
+
+    public async 
+    Task DownloadReference()
+    {
+        Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
+        Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours"));
+
+        string localDLPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourName);
+
+        string tourJsonName = "tour.json";
+
+        
+
+        try
+        {
+            if (!Directory.Exists(localDLPath))
+            {
+                Debug.Log("Path does not exist for: " + tourName);
+                Directory.CreateDirectory(localDLPath);
+
+                // download json
+                string localJsonPath = Path.Combine(localDLPath, tourJsonName);
+                await tourReference.Child(tourJsonName).GetFileAsync(localJsonPath);
+
+                // download images
+                foreach (string imgName in imgNames)
+                {
+                    string localImgPath = Path.Combine(localDLPath, imgName);
+                    await tourReference.Child(imgName).GetFileAsync(localImgPath);
+                }
+
+                Debug.Log("downloaded lmao");
+
+            }
+            else
+            {
+                Debug.Log(String.Format("Directory for {0} already exists", tourName));
+            }
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
     }
 
 }
