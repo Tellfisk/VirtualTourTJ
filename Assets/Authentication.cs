@@ -196,43 +196,75 @@ public class Authentication : MonoBehaviour
         return tourRef.GetSnapshotAsync();
     }
 
-    private void FindAndDownloadFirebaseFolders()
+    private async void FindAndDownloadFirebaseFolders()
     {
         // TODO: only get tours for specific user.
         DocumentReference userRef = db.Collection("users").Document("CiJuY2f6tLavraUPTTSRoHnm3Km2");
 
-        userRef.GetSnapshotAsync().ContinueWith(task =>
+        //
+        DocumentSnapshot document = await userRef.GetSnapshotAsync();
+        //
+        List<CloudTourReference> tourRefs = new List<CloudTourReference>();
+
+        Debug.Log(document);
+        Dictionary<string, object> documentDictionary = document.ToDictionary();
+        IList docTours = (IList)documentDictionary["tours"];
+
+        foreach (string tourName in docTours)
         {
+            DocumentSnapshot snap = await getSnapAsync(tourName);
+            Dictionary<string, object> tourDic = snap.ToDictionary();
+            IList imageNames = (IList) tourDic["images"];
 
-            List<CloudTourReference> tourRefs = new List<CloudTourReference>();
+            CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName);
 
-            DocumentSnapshot document = task.Result;
-            Debug.Log(document);
-            Dictionary<string, object> documentDictionary = document.ToDictionary();
-            IList docTours = (IList)documentDictionary["tours"];
-
-            foreach (string tourName in docTours)
+            foreach (string imgName in imageNames)
             {
-                Task<DocumentSnapshot> taskman = getSnapAsync(tourName);
-                taskman.Wait();
-                DocumentSnapshot snap = taskman.Result;
-
-                Dictionary<string, object> xxx = snap.ToDictionary();
-                IList<string> imageNames = (IList<string>)documentDictionary["images"];
-
-                CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName);
-
-                foreach (string imgName in imageNames)
-                {
-                    tourRef.addImage(imgName);
-                }
-
-                tourRefs.Add(tourRef);
-
+                tourRef.addImage(imgName);
             }
 
-            Debug.Log(tourRefs);
-        });
+            tourRefs.Add(tourRef);
+
+        }
+
+        Debug.Log(tourRefs);
+
+
+        //userRef.GetSnapshotAsync().ContinueWith(task =>
+        //{
+        //DocumentSnapshot document = task.Result;
+        //    List<CloudTourReference> tourRefs = new List<CloudTourReference>();
+
+        //    
+        //    Debug.Log(document);
+        //    Dictionary<string, object> documentDictionary = document.ToDictionary();
+        //    IList docTours = (IList)documentDictionary["tours"];
+
+        //    foreach (string tourName in docTours)
+        //    {
+        //        Task<DocumentSnapshot> taskman = getSnapAsync(tourName);
+        //        Task<IList<string>> newTask = taskman.ContinueWith(taskInner =>
+        //        {
+        //            DocumentSnapshot snap = taskInner.Result;
+
+        //            Dictionary<string, object> xxx = snap.ToDictionary();
+        //            IList<string> imageNames = (IList<string>)documentDictionary["images"];
+        //            return imageNames;
+        //        });
+
+        //        CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName);
+
+        //        foreach (string imgName in imageNames)
+        //        {
+        //            tourRef.addImage(imgName);
+        //        }
+
+        //        tourRefs.Add(tourRef);
+
+        //    }
+
+        //    Debug.Log(tourRefs);
+        //});
 
         //CollectionReference usersRef = db.Collection("users");
         //usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
@@ -257,7 +289,7 @@ public class Authentication : MonoBehaviour
         //})
         //    .ContinueWithOnMainThread(task => {
         //    List<string> tourNames = task.Result;  //TODO: Contains duplicates
-            
+
 
         //    var tasks = new List<Task>();
 
@@ -281,7 +313,7 @@ public class Authentication : MonoBehaviour
         //            {
         //                Debug.Log("Path does not exist for: " + tourName);
         //                Directory.CreateDirectory(localDLPath);
-                        
+
         //                Task taskman = DownloadJson(dirReference, localDLPath);
         //                taskman.Wait();
         //                tasks.Add(taskman);
@@ -298,7 +330,7 @@ public class Authentication : MonoBehaviour
         //            Console.WriteLine(ex.Message);
         //        }
         //    }
-            
+
         //    //Task.WaitAny(tasks.ToArray());
         //    //Debug.Log("en ferdig");
         //    //Debug.Log(tasks.Count);
@@ -347,6 +379,7 @@ public class CloudTourReference
     {
         this.storageReference = storageReference;
         this.tourName = tourName;
+        this.imgNames = new List<string>();
     }
 
     public CloudTourReference(StorageReference dirReference, string tourName, List<string> imgNames)
