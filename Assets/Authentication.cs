@@ -230,14 +230,14 @@ public class Authentication : MonoBehaviour
 
         }
 
+        Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
+        string createdDir = Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours")).FullName;
+
         foreach (CloudTourReference tourRef in tourRefs)
         {
             string tourName = tourRef.tourName;
             StorageReference tourReference = tourRef.tourReference;
             List<string> imgNames = tourRef.imgNames;
-
-            Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
-            string createdDir = Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours")).FullName;
 
             string localDLPath = Path.Combine(createdDir, tourName);
 
@@ -254,46 +254,70 @@ public class Authentication : MonoBehaviour
 
                     // download json
                     string localJsonPath = Path.Combine(localDLPath, tourJsonName);
+
                     Debug.Log(localJsonPath);
+
                     string localJsonUri = new System.Uri(localJsonPath).AbsoluteUri;
                     localJsonUri = "file:///C:/Users/jovli/OneDrive/Documents/UnityProjects/TJFreshAFVirtualTour/VirtualTourTJ/Assets/StreamingAssets/Tours/ooOOOOHcountry/tour.json";
                     //localJsonUri = localJsonPath;
 
+                    localJsonUri = "file://" + Application.dataPath;
+                    Debug.Log(localJsonUri);
 
                     StorageReference childref = tourReference.Child(tourJsonName);
 
-                    Debug.Log("DOWNLOADING TO " + localJsonUri);
-                    Task oioi = childref.GetFileAsync(localJsonUri, new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) =>
-                    {
-                        // called periodically during the download
-                        Debug.Log(String.Format(
-                          "Progress: {0} of {1} bytes transferred.",
-                          state.BytesTransferred,
-                          state.TotalByteCount
-                        ));
-                    }), CancellationToken.None)
-                        ;
-                     //   .ContinueWith(task => { Debug.Log(task.Exception); Debug.Log(task.IsCompleted); Debug.Log(task.IsFaulted); });
+                    //Debug.Log("DOWNLOADING TO " + localJsonUri);
+                    //await childref.GetFileAsync(localJsonUri, new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) =>
+                    //{
+                    //    // called periodically during the download
+                    //    Debug.Log(String.Format(
+                    //      "Progress: {0} of {1} bytes transferred.",
+                    //      state.BytesTransferred,
+                    //      state.TotalByteCount
+                    //    ));
+                    //}), CancellationToken.None)
+                    //    ;
+                    //   .ContinueWith(task => { Debug.Log(task.Exception); Debug.Log(task.IsCompleted); Debug.Log(task.IsFaulted); });
 
-
-                    await oioi;
+                    //await oioi;
 
                     // download images
-                    //foreach (string imgName in imgNames)
-                    //{
-                    //    string localImgPath = Path.GetFullPath(Path.Combine(localDLPath, imgName));
-                    //    string localImgUri = new System.Uri(localImgPath).AbsoluteUri;
-                    //    Debug.Log(localImgUri);
+                    foreach (string imgName in imgNames)
+                    {
+                        string localImgPath = Path.GetFullPath(Path.Combine(Application.persistentDataPath, imgName));
+                        localImgPath = Path.Combine("C:/Users/jovli/Desktop", imgName);
+                        localImgPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop), imgName);
+                        localImgPath = Path.Combine(Application.streamingAssetsPath, imgName);
+                        string localImgUri = new System.Uri(localImgPath).AbsoluteUri;
+                        localImgUri = localImgPath;
+                        Debug.Log(localImgUri);
 
-                    //    await tourReference.Child(imgName).GetFileAsync(localImgUri, new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) => {
-                    //        // called periodically during the download
-                    //        Debug.Log(String.Format(
-                    //          "Progress: {0} of {1} bytes transferred.",
-                    //          state.BytesTransferred,
-                    //          state.TotalByteCount
-                    //        ));
-                    //    }), CancellationToken.None);
-                    //}
+                        //StartCoroutine(DownloadToFile(tourReference.Child(imgName), localImgUri));
+                        //continue;
+                        await tourReference.Child(imgName).GetFileAsync(localImgUri
+                        //    , new Firebase.Storage.StorageProgress<DownloadState>((DownloadState state) => {
+                        //    // called periodically during the download
+                        //    Debug.Log(String.Format(
+                        //      "Progress: {0} of {1} bytes transferred.",
+                        //      state.BytesTransferred,
+                        //      state.TotalByteCount
+                        //    ));
+                        //}), CancellationToken.None
+                        )
+                            .ContinueWith(resultTask => 
+                        {
+                            if (!resultTask.IsFaulted && !resultTask.IsCanceled)
+                            {
+                                Debug.Log("Download finished.");
+                            }
+                            else
+                            {
+                                Debug.Log(resultTask);
+                                Debug.Log("XXXXXXXx");
+                            }
+                        }); 
+                        
+                    }
 
                     Debug.Log("downloaded lmao");
 
@@ -309,151 +333,169 @@ public class Authentication : MonoBehaviour
             }
         }
 
-
-            //foreach (CloudTourReference tourRef in tourRefs) {
-            //    await tourRef.DownloadReference();
-            //}
-
-
-            
-
-        //userRef.GetSnapshotAsync().ContinueWith(task =>
-        //{
-        //DocumentSnapshot document = task.Result;
-        //    List<CloudTourReference> tourRefs = new List<CloudTourReference>();
-
-        //    
-        //    Debug.Log(document);
-        //    Dictionary<string, object> documentDictionary = document.ToDictionary();
-        //    IList docTours = (IList)documentDictionary["tours"];
-
-        //    foreach (string tourName in docTours)
-        //    {
-        //        Task<DocumentSnapshot> taskman = getSnapAsync(tourName);
-        //        Task<IList<string>> newTask = taskman.ContinueWith(taskInner =>
-        //        {
-        //            DocumentSnapshot snap = taskInner.Result;
-
-        //            Dictionary<string, object> xxx = snap.ToDictionary();
-        //            IList<string> imageNames = (IList<string>)documentDictionary["images"];
-        //            return imageNames;
-        //        });
-
-        //        CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName);
-
-        //        foreach (string imgName in imageNames)
-        //        {
-        //            tourRef.addImage(imgName);
-        //        }
-
-        //        tourRefs.Add(tourRef);
-
-        //    }
-
-        //    Debug.Log(tourRefs);
-        //});
-
-        //CollectionReference usersRef = db.Collection("users");
-        //usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        //{
-        //    List<string> tourNames = new List<string>();
-
-        //    QuerySnapshot snapshot = task.Result;
-        //    foreach (DocumentSnapshot document in snapshot.Documents)
-        //    {
-        //        var aaa = document;
-        //        Dictionary<string, object> documentDictionary = document.ToDictionary();
-        //        IList docTours = (IList)documentDictionary["tours"];
-        //        foreach (string lol in docTours)
-        //        {
-        //            tourNames.Add(lol);
-        //        }
-        //    }
-
-
-        //    return tourNames;
-
-        //})
-        //    .ContinueWithOnMainThread(task => {
-        //    List<string> tourNames = task.Result;  //TODO: Contains duplicates
-
-
-        //    var tasks = new List<Task>();
-
-        //    Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
-        //    Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours"));
-
-        //    List<CloudImageReference> imageRefs = new List<CloudImageReference>();
-
-        //    foreach (string tourName in tourNames)
-        //    {
-        //        string localDLPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourName);
-
-        //        Debug.Log(tourName);
-
-        //        StorageReference dirReference = storage.GetReference("Tours/" + tourName);
-        //        imageRefs.Add(new CloudImageReference(localDLPath, dirReference));
-
-        //        try
-        //        {
-        //            if (!Directory.Exists(localDLPath))
-        //            {
-        //                Debug.Log("Path does not exist for: " + tourName);
-        //                Directory.CreateDirectory(localDLPath);
-
-        //                Task taskman = DownloadJson(dirReference, localDLPath);
-        //                taskman.Wait();
-        //                tasks.Add(taskman);
-        //                //Debug.Log("penis " + taskman.Status);
-
-        //            }
-        //            else
-        //            {
-        //                Debug.Log(String.Format("Directory for {0} already exists", tourName));
-        //            }
-        //        }
-        //        catch (IOException ex)
-        //        {
-        //            Console.WriteLine(ex.Message);
-        //        }
-        //    }
-
-        //    //Task.WaitAny(tasks.ToArray());
-        //    //Debug.Log("en ferdig");
-        //    //Debug.Log(tasks.Count);
-
-        //    //Task.WaitAll(tasks.ToArray());
-
-        //    return imageRefs;
-
-        //// After jsons finished downloading.
-        //}).ContinueWithOnMainThread(task => { 
-        //    Debug.Log("spaghetti");
-
-        //    Debug.Log(task);
-        //    List<CloudImageReference> tourLocalPaths = task.Result;
-        //    //List<CloudImageReference> tourLocalPaths = null;
-        //    Debug.Log("AAAAAAAA");
-        //    Debug.Log(tourLocalPaths);
-        //    Debug.Log("spaaaa");
-
-        //    var tasks = new List<Task>();
-
-        //    foreach (CloudImageReference imageRef in tourLocalPaths)
-        //    {
-        //        Debug.Log(imageRef.localDLPath);
-        //        Task taskman = DownloadImages(imageRef);
-        //        taskman.Start();
-        //        tasks.Add(taskman);
-        //    }
-
-        //    Task.WaitAll(tasks.ToArray());
-        //    //vt = JsonConvert.DeserializeObject<VirtualTour>(dataAsJson);
-
-        //});
-        //Debug.Log("UTENFOOOR");
     }
+
+    private static IEnumerator DownloadToFile(StorageReference storageReference, string localFilenameUriString)
+    {
+
+        Debug.Log(String.Format("Downloading {0} to {1}...", storageReference.Path,
+                               localFilenameUriString));
+        var task = storageReference.GetFileAsync(
+          localFilenameUriString);
+        yield return new WaitUntil(() => task.IsCompleted);
+        //if (!(task.IsFaulted || task.IsCanceled)) ;
+            //{
+            //    var filename = FileUriStringToPath(localFilenameUriString);
+            //    DebugLog(String.Format("Finished downloading file {0} ({1})", localFilenameUriString,
+            //                           filename));
+            //    DebugLog(String.Format("File Size {0} bytes\n", (new FileInfo(filename)).Length));
+            //    fileContents = File.ReadAllText(filename);
+            //}
+        }
 }
+//foreach (CloudTourReference tourRef in tourRefs) {
+//    await tourRef.DownloadReference();
+//}
+
+
+
+
+//userRef.GetSnapshotAsync().ContinueWith(task =>
+//{
+//DocumentSnapshot document = task.Result;
+//    List<CloudTourReference> tourRefs = new List<CloudTourReference>();
+
+//    
+//    Debug.Log(document);
+//    Dictionary<string, object> documentDictionary = document.ToDictionary();
+//    IList docTours = (IList)documentDictionary["tours"];
+
+//    foreach (string tourName in docTours)
+//    {
+//        Task<DocumentSnapshot> taskman = getSnapAsync(tourName);
+//        Task<IList<string>> newTask = taskman.ContinueWith(taskInner =>
+//        {
+//            DocumentSnapshot snap = taskInner.Result;
+
+//            Dictionary<string, object> xxx = snap.ToDictionary();
+//            IList<string> imageNames = (IList<string>)documentDictionary["images"];
+//            return imageNames;
+//        });
+
+//        CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName);
+
+//        foreach (string imgName in imageNames)
+//        {
+//            tourRef.addImage(imgName);
+//        }
+
+//        tourRefs.Add(tourRef);
+
+//    }
+
+//    Debug.Log(tourRefs);
+//});
+
+//CollectionReference usersRef = db.Collection("users");
+//usersRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+//{
+//    List<string> tourNames = new List<string>();
+
+//    QuerySnapshot snapshot = task.Result;
+//    foreach (DocumentSnapshot document in snapshot.Documents)
+//    {
+//        var aaa = document;
+//        Dictionary<string, object> documentDictionary = document.ToDictionary();
+//        IList docTours = (IList)documentDictionary["tours"];
+//        foreach (string lol in docTours)
+//        {
+//            tourNames.Add(lol);
+//        }
+//    }
+
+
+//    return tourNames;
+
+//})
+//    .ContinueWithOnMainThread(task => {
+//    List<string> tourNames = task.Result;  //TODO: Contains duplicates
+
+
+//    var tasks = new List<Task>();
+
+//    Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
+//    Directory.CreateDirectory(Path.Combine(Application.streamingAssetsPath, "Tours"));
+
+//    List<CloudImageReference> imageRefs = new List<CloudImageReference>();
+
+//    foreach (string tourName in tourNames)
+//    {
+//        string localDLPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourName);
+
+//        Debug.Log(tourName);
+
+//        StorageReference dirReference = storage.GetReference("Tours/" + tourName);
+//        imageRefs.Add(new CloudImageReference(localDLPath, dirReference));
+
+//        try
+//        {
+//            if (!Directory.Exists(localDLPath))
+//            {
+//                Debug.Log("Path does not exist for: " + tourName);
+//                Directory.CreateDirectory(localDLPath);
+
+//                Task taskman = DownloadJson(dirReference, localDLPath);
+//                taskman.Wait();
+//                tasks.Add(taskman);
+//                //Debug.Log("penis " + taskman.Status);
+
+//            }
+//            else
+//            {
+//                Debug.Log(String.Format("Directory for {0} already exists", tourName));
+//            }
+//        }
+//        catch (IOException ex)
+//        {
+//            Console.WriteLine(ex.Message);
+//        }
+//    }
+
+//    //Task.WaitAny(tasks.ToArray());
+//    //Debug.Log("en ferdig");
+//    //Debug.Log(tasks.Count);
+
+//    //Task.WaitAll(tasks.ToArray());
+
+//    return imageRefs;
+
+//// After jsons finished downloading.
+//}).ContinueWithOnMainThread(task => { 
+//    Debug.Log("spaghetti");
+
+//    Debug.Log(task);
+//    List<CloudImageReference> tourLocalPaths = task.Result;
+//    //List<CloudImageReference> tourLocalPaths = null;
+//    Debug.Log("AAAAAAAA");
+//    Debug.Log(tourLocalPaths);
+//    Debug.Log("spaaaa");
+
+//    var tasks = new List<Task>();
+
+//    foreach (CloudImageReference imageRef in tourLocalPaths)
+//    {
+//        Debug.Log(imageRef.localDLPath);
+//        Task taskman = DownloadImages(imageRef);
+//        taskman.Start();
+//        tasks.Add(taskman);
+//    }
+
+//    Task.WaitAll(tasks.ToArray());
+//    //vt = JsonConvert.DeserializeObject<VirtualTour>(dataAsJson);
+
+//});
+//Debug.Log("UTENFOOOR");
+
 
 public class CloudTourReference
 {
@@ -491,7 +533,6 @@ public class CloudTourReference
         string localDLPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourName);
 
         string tourJsonName = "tour.json";
-
         
 
         try
