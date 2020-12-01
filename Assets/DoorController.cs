@@ -13,7 +13,7 @@ public class DoorController : MonoBehaviour
 
     void Start()
     {
-        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+        DirectoryInfo dir = new DirectoryInfo(Path.Combine(Application.streamingAssetsPath, "Tours"));
         DirectoryInfo[] paths = dir.GetDirectories();
 
         foreach (DirectoryInfo path in paths)

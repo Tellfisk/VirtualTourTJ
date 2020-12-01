@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using Firebase.Auth;
 using Firebase.Storage;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Firebase.Firestore;
-using Firebase.Extensions;
-using System;
 using System.IO;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class Authentication : MonoBehaviour
 {
@@ -72,7 +67,8 @@ public class Authentication : MonoBehaviour
         {
             Debug.Log("User authenticated, attempting download.");
 
-            string toursPath = Path.Combine(Application.persistentDataPath, "Tours");
+            string toursPath = Path.Combine(Application.streamingAssetsPath, "Tours");
+
             //Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
             if (!Directory.Exists(toursPath))
             {
@@ -86,7 +82,8 @@ public class Authentication : MonoBehaviour
             {
                 await tourRef.DownloadReference();
             }
-            //SceneManager.LoadScene("Lobby");
+
+            SceneManager.LoadScene("Lobby");
         }
     }
 
@@ -113,9 +110,8 @@ public class Authentication : MonoBehaviour
         foreach (string tourName in docTours)
         {
 
-            string tempTourxoxo = tourName.Substring(0, 1).ToUpper() + tourName.Substring(1, tourName.Length-1).ToLower();
-            Debug.Log(tempTourxoxo);
-            string tourDLPath = Path.Combine(toursPathLocal, tempTourxoxo);
+            string tourDLPath = Path.Combine(toursPathLocal, tourName);
+
             if (!Directory.Exists(tourDLPath))
             {
                 await Task.Run(() => (Directory.CreateDirectory(tourDLPath)));
@@ -204,6 +200,7 @@ public class CloudTourReference
         foreach (string imgName in imgNames)
         {
             string localImgPath = Path.Combine(Application.streamingAssetsPath, imgName);
+            localImgPath = Path.Combine(localDLPath, imgName);
             Debug.Log(localImgPath);
 
             await tourReference.Child(imgName).GetFileAsync(localImgPath)

@@ -32,6 +32,8 @@ public class VirtualTourManager : MonoBehaviour
     public Color onHoverColor = new Color(0.0f, 1.0f, 0.0f);
     public Color defaultColor = new Color(1.0f, 0.0f, 0.0f);
 
+    private string tourPath;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,7 +42,9 @@ public class VirtualTourManager : MonoBehaviour
         bg.color = fadeColor;
         myCanvas.alpha = 0;
 
-        string tourFilePath = Path.Combine(Application.streamingAssetsPath, tourName, "tour.json");
+        this.tourPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourName);
+
+        string tourFilePath = Path.Combine(this.tourPath, "tour.json");
 
         StartCoroutine(LoadVirtualTour(tourFilePath));
     }
@@ -79,7 +83,9 @@ public class VirtualTourManager : MonoBehaviour
     {
         if (!loadingInProgress)
         {
-            string tourImgsPath = Path.Combine(Application.streamingAssetsPath, tourName);
+
+            string tourImgsPath = this.tourPath;
+
             VirtualState currState = vt.states[state];
 
             if (!string.IsNullOrEmpty(Path.Combine(tourImgsPath, currState.img)))
