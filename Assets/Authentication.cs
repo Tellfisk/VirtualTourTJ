@@ -72,7 +72,7 @@ public class Authentication : MonoBehaviour
         {
             Debug.Log("User authenticated, attempting download.");
 
-            string toursPath = Path.Combine(Application.streamingAssetsPath, "Tours");
+            string toursPath = Path.Combine(Application.persistentDataPath, "Tours");
             //Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
             if (!Directory.Exists(toursPath))
             {
@@ -113,7 +113,9 @@ public class Authentication : MonoBehaviour
         foreach (string tourName in docTours)
         {
 
-            string tourDLPath = Path.Combine(toursPathLocal, tourName);
+            string tempTourxoxo = tourName.Substring(0, 1).ToUpper() + tourName.Substring(1, tourName.Length-1).ToLower();
+            Debug.Log(tempTourxoxo);
+            string tourDLPath = Path.Combine(toursPathLocal, tempTourxoxo);
             if (!Directory.Exists(tourDLPath))
             {
                 await Task.Run(() => (Directory.CreateDirectory(tourDLPath)));
@@ -185,7 +187,10 @@ public class CloudTourReference
 
         // download json
         string localJsonPath = Path.Combine(localDLPath, tourJsonName);
+        Debug.Log(localJsonPath);
         //localJsonPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourJsonName);
+        //localJsonPath = Path.Combine(Application.streamingAssetsPath, "Tours", "Spaghettitall", tourJsonName);
+        //Debug.Log(localJsonPath);
         //localJsonPath = Path.Combine(Application.streamingAssetsPath, tourJsonName);
 
         Debug.Log(localJsonPath);
