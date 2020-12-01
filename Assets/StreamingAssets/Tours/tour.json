@@ -1,0 +1,52 @@
+{
+  "startState": 1,
+  "leaveScene": null,
+  "states": {
+    "1": {
+      "img": "1.png",
+      "img2": "1.png",
+      "video": null,
+      "video_af": null,
+      "markers": [
+        {
+          "reference": "state:2",
+          "texture": null,
+          "text": null,
+          "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "position": {
+            "x": -1.81697524,
+            "y": 6.075514,
+            "z": 18.194149
+          }
+        }
+      ]
+    },
+    "2": {
+      "img": "2.png",
+      "img2": "2.png",
+      "video": null,
+      "video_af": null,
+      "markers": [
+        {
+          "reference": "state:1",
+          "texture": null,
+          "text": null,
+          "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "position": {
+            "x": 0.574270844,
+            "y": 5.64699364,
+            "z": 18.4013176
+          }
+        }
+      ]
+    }
+  }
+}
