@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-
 public class VirtualTourManager : MonoBehaviour
 {
     private string tourName;
@@ -49,7 +48,7 @@ public class VirtualTourManager : MonoBehaviour
         StartCoroutine(LoadVirtualTour(tourFilePath));
     }
 
-    IEnumerator LoadVirtualTour(string jsonPath)
+    public IEnumerator LoadVirtualTour(string jsonPath)
     {
         string dataAsJson = "";
         vt = null;

@@ -7,7 +7,7 @@ using System.IO;
 using TMPro;
 
 public class DoorController : MonoBehaviour
-{ 
+{
     public GameObject doorPrefab;
     private float staticPos = -5;   // TODO Has to be dynamic, changing based on the number of available tours
 
@@ -18,16 +18,13 @@ public class DoorController : MonoBehaviour
 
         foreach (DirectoryInfo path in paths)
         {
-            string tourPath = path.ToString();
-            
-            string[] words = tourPath.Split('\\');
-            string tourFolder = words[words.Length - 1];  //Get the folder name from the path
+            string tourName = Path.GetFileName(path.FullName);  //Get the folder name from the path
             Debug.Log(path);
-            Debug.Log(tourFolder);
             GameObject door = GameObject.Instantiate(doorPrefab, new Vector3(staticPos, 0, 0), Quaternion.Euler(-90,0,0));
-            door.GetComponentInChildren<TextMeshPro>().text = tourFolder;
+            door.GetComponentInChildren<TextMeshPro>().text = tourName;
             staticPos += 3;
-            door.GetComponent<DoorClass>().folder = tourFolder;
+            door.GetComponent<DoorClass>().tourName = tourName;
+            door.GetComponent<DoorClass>().tourPath = path.FullName;
         }
     }
 
@@ -43,7 +40,7 @@ public class DoorController : MonoBehaviour
                 if (hit.transform != null)
                 {
                     GameObject button = hit.collider.gameObject;
-                    string folder = button.GetComponent<DoorClass>().folder;
+                    string folder = button.GetComponent<DoorClass>().tourName;
                     SceneChange.ChangeSceneAndTour("VirtualTour", folder);
                 }
             }
