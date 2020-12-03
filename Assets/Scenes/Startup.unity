@@ -1136,7 +1136,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1652119349}
-        m_MethodName: Hei
+        m_MethodName: InitAuthorization
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

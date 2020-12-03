@@ -47,7 +47,7 @@ public class Authentication : MonoBehaviour
         });
     }
 
-    public void Hei()
+    public void InitAuthorization()
     {
         auth.SignOut();
         auth.StateChanged += PostAuth;
@@ -98,16 +98,12 @@ public class Authentication : MonoBehaviour
 
     private async Task<List<CloudTourReference>> FindAndDownloadFirebaseFolders(string toursPathLocal)
     {
-       
         DocumentReference userRef = db.Collection("users").Document(auth.CurrentUser.UserId);
-
-        //
-        DocumentSnapshot document = await userRef.GetSnapshotAsync();
-        //
+        
+        DocumentSnapshot userDocumentSnap = await userRef.GetSnapshotAsync();
         List<CloudTourReference> tourRefs = new List<CloudTourReference>();
 
-        Debug.Log(document);
-        Dictionary<string, object> documentDictionary = document.ToDictionary();
+        Dictionary<string, object> documentDictionary = userDocumentSnap.ToDictionary();
         IList docTours = (IList)documentDictionary["tours"];
 
         if(docTours.Count == 0)
@@ -119,7 +115,6 @@ public class Authentication : MonoBehaviour
 
         foreach (string tourName in docTours)
         {
-
             string tourDLPath = Path.Combine(toursPathLocal, tourName);
 
             if (!Directory.Exists(tourDLPath))
@@ -127,13 +122,16 @@ public class Authentication : MonoBehaviour
                 await Task.Run(() => (Directory.CreateDirectory(tourDLPath)));
             }
             else { Debug.Log("tour folder exists!"); }
-            //
-            DocumentSnapshot snap = await getSnapAsync(tourName);
-            //
-            Dictionary<string, object> tourDic = snap.ToDictionary();
+            
+            DocumentSnapshot tourDocumentSnap = await getSnapAsync(tourName);
+            Dictionary<string, object> tourDic = tourDocumentSnap.ToDictionary();
             IList imageNames = (IList) tourDic["images"];
 
-            CloudTourReference tourRef = new CloudTourReference(storage.GetReference("Tours/" + tourName), tourName, tourDLPath);
+            CloudTourReference tourRef = new CloudTourReference(
+                storage.GetReference("Tours/" + tourName), 
+                tourName, 
+                tourDLPath
+                );
 
             foreach (string imgName in imageNames)
             {
@@ -145,7 +143,6 @@ public class Authentication : MonoBehaviour
         }
 
         return tourRefs;
-
     }
 }
 
@@ -174,7 +171,7 @@ public class CloudTourReference
     //{
     //    this.tourReference = tourReference;
     //    this.tourName = tourName;
-    // this.localDLPath = localDLPath;
+    //    this.localDLPath = localDLPath;
     //    this.imgNames = imgNames;
     //}
 
@@ -183,8 +180,7 @@ public class CloudTourReference
         this.imgNames.Add(imageName);
     }
 
-    public async 
-    Task DownloadReference()
+    public async Task DownloadReference()
     {
 
         string tourJsonName = "tour.json";
@@ -193,13 +189,6 @@ public class CloudTourReference
 
         // download json
         string localJsonPath = Path.Combine(localDLPath, tourJsonName);
-        Debug.Log(localJsonPath);
-        //localJsonPath = Path.Combine(Application.streamingAssetsPath, "Tours", tourJsonName);
-        //localJsonPath = Path.Combine(Application.streamingAssetsPath, "Tours", "Spaghettitall", tourJsonName);
-        //Debug.Log(localJsonPath);
-        //localJsonPath = Path.Combine(Application.streamingAssetsPath, tourJsonName);
-
-        Debug.Log(localJsonPath);
 
         StorageReference childref = tourReference.Child(tourJsonName);
 
@@ -223,13 +212,11 @@ public class CloudTourReference
                     else
                     {
                         Debug.Log(resultTask);
-                        Debug.Log("XXXXXXXx");
                     }
                 });
-
         }
 
-        Debug.Log("downloaded lmao");
+        Debug.Log("All downloads complete");
     }
 
 }
