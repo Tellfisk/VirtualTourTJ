@@ -78,12 +78,15 @@ public class Authentication : MonoBehaviour
 
             List<CloudTourReference> tourRefs = await FindAndDownloadFirebaseFolders(toursPath);
 
-            foreach (CloudTourReference tourRef in tourRefs)
-            {
-                await tourRef.DownloadReference();
+            if(tourRefs != null) {
+                foreach (CloudTourReference tourRef in tourRefs)
+                {
+                    await tourRef.DownloadReference();
+                }
+
+                SceneManager.LoadScene("Lobby");
             }
 
-            SceneManager.LoadScene("Lobby");
         }
     }
 
@@ -95,8 +98,8 @@ public class Authentication : MonoBehaviour
 
     private async Task<List<CloudTourReference>> FindAndDownloadFirebaseFolders(string toursPathLocal)
     {
-        // TODO: only get tours for specific user.
-        DocumentReference userRef = db.Collection("users").Document("CiJuY2f6tLavraUPTTSRoHnm3Km2");
+       
+        DocumentReference userRef = db.Collection("users").Document(auth.CurrentUser.UserId);
 
         //
         DocumentSnapshot document = await userRef.GetSnapshotAsync();
@@ -106,6 +109,13 @@ public class Authentication : MonoBehaviour
         Debug.Log(document);
         Dictionary<string, object> documentDictionary = document.ToDictionary();
         IList docTours = (IList)documentDictionary["tours"];
+
+        if(docTours.Count == 0)
+        {
+            // TODO: add this as a printout in the app.
+            Debug.Log("USER HAS NO TOURS ASSIGNED.");
+            return null;
+        }
 
         foreach (string tourName in docTours)
         {
