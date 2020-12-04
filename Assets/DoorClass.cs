@@ -60,7 +60,7 @@ public class DoorClass : MonoBehaviour
         }
         else
         {
-            Debug.Log("Error: Did not load VirtualTour object");
+            Debug.Log("Error: Did not load VirtualTour object -- " + jsonPath);
         }
     }
 }

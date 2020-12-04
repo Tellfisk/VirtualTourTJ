@@ -45,10 +45,10 @@ public class VirtualTourManager : MonoBehaviour
 
         string tourFilePath = Path.Combine(this.tourPath, "tour.json");
 
-        
+   
 
         StartCoroutine(LoadVirtualTour(tourFilePath));
-    }
+   }
 
     public IEnumerator LoadVirtualTour(string jsonPath)
     {

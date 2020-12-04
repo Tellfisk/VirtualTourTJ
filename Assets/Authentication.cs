@@ -70,11 +70,13 @@ public class Authentication : MonoBehaviour
             string toursPath = Path.Combine(Application.streamingAssetsPath, "Tours");
 
             //Directory.Delete(Path.Combine(Application.streamingAssetsPath, "Tours"), true);
-            if (!Directory.Exists(toursPath))
+            if (Directory.Exists(toursPath))
             {
-                Debug.Log("Creating tour main folder...");
-                Directory.CreateDirectory(toursPath);
+                Directory.Delete(toursPath, true);
             }
+
+            Debug.Log("Creating tour main folder...");
+            Directory.CreateDirectory(toursPath);
 
             List<CloudTourReference> tourRefs = await FindAndDownloadFirebaseFolders(toursPath);
 
